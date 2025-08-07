@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { AiOutlineShoppingCart, AiOutlineMenu } from "react-icons/ai";
+import { RxCross2 } from "react-icons/rx";
 import ProfileDropdown from '../core/Auth/ProfileDropdown';
 import { apiConnector } from '../../services/apiconnector';
 import { categories } from '../../services/apis'
@@ -32,11 +33,17 @@ function Navbar() {
     const { totalItems } = useSelector((state) => state.cart);
     const { user } = useSelector((state) => state.profile);
     const [loading, setLoading] = useState(false)
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [catalogOpen, setcatalogOpen] = useState(false)
 
     const location = useLocation();
     const matchRoute = (route) => { return matchPath({ path: route }, location.pathname) }
 
     const [subLinks, setSubLinks] = useState([]);
+
+    const toggleMobileMenu = () => {
+        setMobileMenuOpen((prev) => !prev);
+    };
 
     const fetchSubLinks = async () => {
         try {
@@ -168,11 +175,118 @@ function Navbar() {
                         token !== null && <ProfileDropdown />
                     }
                 </div>
-                <button className="mr-4 md:hidden">
-                    <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
+                <button
+                    className="mr-4 md:hidden"
+                    onClick={toggleMobileMenu}
+                >
+                    {mobileMenuOpen ? (
+                        <RxCross2 fontSize={24} className='text-[#AFB2BF]' fill="#AFB2BF" />
+                    ) : (
+                        <AiOutlineMenu fontSize={24} fill="#AFB2BF" />
+                    )}
                 </button>
 
             </div>
+            {/* ✅ Mobile Menu - only visible when hamburger is open */}
+            {mobileMenuOpen && (
+                <div className="absolute top-14 left-0 w-full bg-richblack-800 p-4 z-50 md:hidden">
+                    <ul className="flex flex-col gap-y-4 items-center text-richblack-25">
+                        {NavbarLinks.map((link, index) => (
+                            <li key={index}>
+                                {link.title === "Catalog" ? (
+                                    <div className="relative w-full">
+                                        <button
+                                            className={`flex w-full items-center justify-center gap-2 px-4 py-2 font-semibold text-richblack-25 ${matchRoute("/catalog/:catalogName") ? "text-yellow-25" : ""
+                                                }`}
+                                            onClick={() => setcatalogOpen((prev) => !prev)}
+                                        >
+                                            <p>{link.title}</p>
+                                            <IoIosArrowDown
+                                                className={`text-sm transition-transform duration-300 ${catalogOpen ? "rotate-180" : "rotate-0"
+                                                    }`}
+                                            />
+                                        </button>
+
+                                        {/* Dropdown content */}
+                                        {catalogOpen && (
+                                            <div
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="absolute left-1/2 z-[1000] mt-2 w-[260px] -translate-x-1/2 divide-y divide-richblack-600 overflow-hidden rounded-md border border-richblack-700 bg-richblack-800 shadow-md"
+                                            >
+                                                {loading ? (
+                                                    <div className="py-3 text-center text-richblack-100">Loading...</div>
+                                                ) : subLinks?.length ? (
+                                                    subLinks
+                                                        .filter((sublink) => sublink?.course?.length > 0)
+                                                        .map((sublink, i) => (
+                                                            <Link
+                                                                key={i}
+                                                                to={`/catalog/${sublink.name
+                                                                    .split(" ")
+                                                                    .join("-")
+                                                                    .toLowerCase()}`}
+                                                                onClick={() => {
+                                                                    setcatalogOpen(false);
+                                                                    setMobileMenuOpen(false);
+                                                                }}
+                                                            >
+                                                                <div className="px-4 py-2 text-sm text-richblack-100 hover:bg-richblack-700 hover:text-yellow-25">
+                                                                    {sublink.name}
+                                                                </div>
+                                                            </Link>
+                                                        ))
+                                                ) : (
+                                                    <div className="py-3 text-center text-richblack-300">No Courses Found</div>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <Link
+                                        to={link?.path}
+                                        onClick={() => setMobileMenuOpen(false)}
+                                        className="flex justify-center py-2 text-richblack-25 hover:text-yellow-25"
+                                    >
+                                        <p className={`${matchRoute(link?.path) ? "text-yellow-25" : ""}`}>
+                                            {link.title}
+                                        </p>
+                                    </Link>
+                                )}
+
+                            </li>
+                        ))}
+
+                        {/* ✅ Conditional rendering based on login status */}
+                        {token === null ? (
+                            <div className='flex gap-4 items-center'>
+                                <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                                    <button className='border border-richblack-700 bg-richblack-800 px-[12px] py-[8px] text-richblack-100 rounded-[8px]'>Log in</button>
+                                </Link>
+                                <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                                    <button className='border border-richblack-700 bg-richblack-800 px-[12px] py-[8px] text-richblack-100 rounded-[8px]'>Sign up</button>
+                                </Link>
+                            </div>
+                        ) : (
+                            <>
+                                {user && user.accountType !== ACCOUNT_TYPE.INSTRUCTOR && (
+                                    <Link to="/dashboard/cart" className='relative'>
+                                        <AiOutlineShoppingCart className="text-2xl text-richblack-100" />
+                                        {
+                                            totalItems > 0 && (
+                                                <span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full bg-richblack-600 text-center text-xs font-bold text-yellow-100">
+                                                    {totalItems}
+                                                </span>
+                                            )
+                                        }
+                                    </Link>
+                                )}
+                                <ProfileDropdown />
+                            </>
+                        )}
+                    </ul>
+                </div>
+            )}
+
         </div>
     )
 }
