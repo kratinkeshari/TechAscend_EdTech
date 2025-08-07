@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
 	cors({
-		origin: "https://techascend-backend.onrender.com",
+		origin: "https://techascend-frontend.vercel.app",
 		credentials: true,
 	})
 );
