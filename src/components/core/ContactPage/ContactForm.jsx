@@ -3,15 +3,13 @@ import ContactUsForm from "./ContactUsForm";
 
 const ContactForm = () => {
   return (
-    <div className="border border-richblack-600 text-richblack-300 rounded-xl p-7 lg:p-14 flex gap-3 flex-col">
-      <h1 className="text-4xl leading-10 font-semibold text-richblack-5">
+    <div className="border border-richblack-600 text-richblack-300 rounded-xl p-4 md:p-7 lg:p-14 flex gap-3 flex-col">
+      <h1 className="text-2xl md:text-3xl lg:text-4xl leading-8 md:leading-10 font-semibold text-richblack-5">
         Got a Idea? We&apos;ve got the skills. Let&apos;s team up
       </h1>
-      <p className="">
-        Tell us more about yourself and what you&apos;re got in mind.
-      </p>
+      <p className="text-sm md:text-base">Tell us more about yourself and what you&apos;re got in mind.</p>
 
-      <div className="mt-7">
+      <div className="mt-4 md:mt-7">
         <ContactUsForm />
       </div>
     </div>

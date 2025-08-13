@@ -22,16 +22,36 @@ function RatingStars({ Review_Count, Star_Size }) {
     })
   }, [Review_Count])
 
+    const responsiveStarSize = Star_Size || (typeof window !== "undefined" && window.innerWidth < 768 ? 16 : 20)
+
   return (
-    <div className="flex gap-1 text-yellow-100">
+<div className="flex items-center gap-1 flex-wrap">
       {[...new Array(starCount.full)].map((_, i) => {
-        return <TiStarFullOutline key={i} size={Star_Size || 20} />
+        return (
+          <TiStarFullOutline
+            key={i}
+            size={Star_Size || (window.innerWidth < 640 ? 16 : window.innerWidth < 1024 ? 18 : 20)}
+            className="text-yellow-100"
+          />
+        )
       })}
       {[...new Array(starCount.half)].map((_, i) => {
-        return <TiStarHalfOutline key={i} size={Star_Size || 20} />
+        return (
+          <TiStarHalfOutline
+            key={i}
+            size={Star_Size || (window.innerWidth < 640 ? 16 : window.innerWidth < 1024 ? 18 : 20)}
+            className="text-yellow-100"
+          />
+        )
       })}
       {[...new Array(starCount.empty)].map((_, i) => {
-        return <TiStarOutline key={i} size={Star_Size || 20} />
+        return (
+          <TiStarOutline
+            key={i}
+            size={Star_Size || (window.innerWidth < 640 ? 16 : window.innerWidth < 1024 ? 18 : 20)}
+            className="text-yellow-100"
+          />
+        )
       })}
     </div>
   )

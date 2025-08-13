@@ -17,14 +17,16 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="relative flex min-h-[calc(100vh-3.5rem)]">
-            <Sidebar />
-            <div className="h-[calc(100vh-3.5rem)] flex-1 overflow-auto">
-                <div className="mx-auto w-11/12 max-w-[1000px] py-10">
-                    <Outlet />
-                </div>
-            </div>
+    <div className="relative flex min-h-[calc(100vh-3.5rem)]">
+      <Sidebar />
+
+      <div className="h-[calc(100vh-3.5rem)] flex-1 overflow-auto w-full min-[700px]:w-auto">
+
+        <div className="mx-auto w-11/12 max-w-[1000px] py-6 min-[700px]:py-10 px-2 sm:px-4">
+          <Outlet />
         </div>
+      </div>
+    </div>
     )
 }
 
